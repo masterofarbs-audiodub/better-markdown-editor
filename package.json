@@ -1,10 +1,10 @@
 {
-  "name": "markdown-editor",
+  "name": "better-markdown-editor",
   "displayName": "Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG editor for markdown.",
   "version": "0.1.14",
-  "publisher": "zaaack",
+  "publisher": "masterofarbs-audiodub",
   "private": true,
   "engines": {
     "vscode": "^1.47.0"
