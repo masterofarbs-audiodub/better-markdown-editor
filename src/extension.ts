@@ -30,6 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
       {
         webviewOptions: {
           retainContextWhenHidden: true,
+          enableFindWidget: true,
         },
         supportsMultipleEditorsPerDocument: false,
       }
@@ -291,6 +292,10 @@ class EditorPanel {
               url = NodePath.resolve(this._fsPath, '..', url)
             }
             vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(url))
+            break
+          }
+          case 'find': {
+            vscode.commands.executeCommand('editor.action.webvieweditor.showFind')
             break
           }
         }
@@ -561,6 +566,10 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
           vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(url))
           break
         }
+        case 'find': {
+          vscode.commands.executeCommand('editor.action.webvieweditor.showFind')
+          break
+        }
       }
     }, null, disposables)
 
@@ -582,7 +591,6 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     return {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.file('/'), ...MarkdownEditorProvider.getFolders()],
-      enableFindWidget: true,
     }
   }
 

@@ -1,1 +1,2 @@
-ignoreScripts: false
+onlyBuiltDependencies:
+  - esbuild

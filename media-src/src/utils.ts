@@ -1,9 +1,7 @@
-import { keyboard } from '@testing-library/user-event/dist/keyboard'
 import $ from 'jquery'
 require('jquery-confirm')(window, $)
 import 'jquery-confirm/css/jquery-confirm.css'
 
-import _ from 'lodash'
 import Vditor from 'vditor'
 window.vscode =
   (window as any).acquireVsCodeApi && (window as any).acquireVsCodeApi()

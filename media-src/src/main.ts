@@ -10,20 +10,37 @@ import {
   saveVditorOptions,
 } from './utils'
 
-import { merge } from 'lodash'
 import Vditor from 'vditor'
-import { format } from 'date-fns'
 import 'vditor/dist/index.css'
 import { t, lang } from './lang'
 import { toolbar } from './toolbar'
 import { fixTableIr } from './fix-table-ir'
 import './main.css'
 
+function deepMerge(target: any, ...sources: any[]): any {
+  for (const source of sources) {
+    if (!source) continue
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        target[key] = deepMerge(target[key] || {}, source[key])
+      } else {
+        target[key] = source[key]
+      }
+    }
+  }
+  return target
+}
+
+function formatDate(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`
+}
+
 function initVditor(msg) {
   console.log('msg', msg)
   let inputTimer
   let defaultOptions: any = {}
-  defaultOptions = merge(defaultOptions, msg.options, {
+  defaultOptions = deepMerge(defaultOptions, msg.options, {
     preview: {
       math: {
         inlineDigit: true,
@@ -76,7 +93,7 @@ function initVditor(msg) {
             const d = new Date()
             return {
               base64: await fileToBase64(f),
-              name: `${format(new Date(), 'yyyyMMdd_HHmmss')}_${f.name}`.replace(
+              name: `${formatDate(new Date())}_${f.name}`.replace(
                 /[^\w-_.]+/,
                 '_'
               ),

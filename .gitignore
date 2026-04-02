@@ -60,3 +60,11 @@ typings/
 lib
 *.vsix
 out
+
+# Build artifacts
+*.js.map
+media/dist/main.css.map
+test/**/*.js
+test/**/*.js.map
+media-src/src/**/*.js
+media-src/src/**/*.js.map
