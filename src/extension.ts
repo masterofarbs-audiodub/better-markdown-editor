@@ -7,7 +7,7 @@ function debug(...args: any[]) {
 }
 
 function showError(msg: string) {
-  vscode.window.showErrorMessage(`[markdown-editor] ${msg}`)
+  vscode.window.showErrorMessage(`[Better Markdown Editor] ${msg}`)
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -396,7 +396,7 @@ class EditorPanel {
 
 				${CssFiles.map((f) => `<link href="${f}" rel="stylesheet">`).join('\n')}
 
-				<title>markdown editor</title>
+				<title>Better Markdown Editor</title>
         <style>` +
       EditorPanel.config.get<string>('customCss') +
       `</style>
@@ -422,7 +422,7 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   constructor(private readonly context: vscode.ExtensionContext) { }
 
   /**
-   * Called when user selects Markdown Editor via "Open With"
+   * Called when user selects Better Markdown Editor via "Open With"
    */
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
@@ -603,7 +603,7 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
 				${CssFiles.map((f) => `<link href="${f}" rel="stylesheet">`).join('\n')}
 
-				<title>markdown editor</title>
+				<title>Better Markdown Editor</title>
         <style>` +
       EditorPanel.config.get<string>('customCss') +
       `</style>
