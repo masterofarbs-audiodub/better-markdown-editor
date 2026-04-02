@@ -303,7 +303,7 @@ window.addEventListener("message", (e) => {
 
 [${k.split("/").slice(-1)[0]}](${k})
 
-`)}}});break}default:break}});ki();ji();vscode.postMessage({command:"ready"});})();
+`)}}});break}case"focus":{window.vditor?vditor.focus():document.getElementById("app")?.focus();break}default:break}});ki();ji();vscode.postMessage({command:"ready"});})();
 /*! Bundled license information:
 
 jquery/dist/jquery.js:

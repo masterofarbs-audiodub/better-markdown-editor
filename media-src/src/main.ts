@@ -154,6 +154,14 @@ window.addEventListener('message', (e) => {
       })
       break
     }
+    case 'focus': {
+      if (window.vditor) {
+        vditor.focus()
+      } else {
+        document.getElementById('app')?.focus()
+      }
+      break
+    }
     default:
       break
   }

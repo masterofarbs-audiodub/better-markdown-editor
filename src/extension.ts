@@ -154,6 +154,12 @@ class EditorPanel {
     // Listen for when the panel is disposed
     // This happens when the user closes the panel or when the panel is closed programmatically
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
+    // Auto-focus webview when tab becomes active so Cmd+F works immediately
+    this._panel.onDidChangeViewState((e) => {
+      if (e.webviewPanel.active) {
+        e.webviewPanel.webview.postMessage({ command: 'focus' })
+      }
+    }, null, this._disposables)
     let textEditTimer: NodeJS.Timeout | void
     // close EditorPanel when vsc editor is close
     vscode.workspace.onDidCloseTextDocument((e) => {
@@ -463,6 +469,13 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         ...props,
       })
     }
+
+    // Auto-focus webview when tab becomes active so Cmd+F works immediately
+    webviewPanel.onDidChangeViewState((e) => {
+      if (e.webviewPanel.active) {
+        e.webviewPanel.webview.postMessage({ command: 'focus' })
+      }
+    }, null, disposables)
 
     // Listen for document close
     vscode.workspace.onDidCloseTextDocument((e) => {
