@@ -1,5 +1,8 @@
 import { bench, describe } from 'vitest'
-import { merge } from 'lodash'
+
+import * as path from 'path'
+const lodashPath = path.resolve(__dirname, '../../media-src/node_modules/lodash')
+const { merge } = require(lodashPath)
 
 // Benchmark lodash.merge overhead - this is a candidate for removal
 // lodash contributes significantly to the 805KB bundle
