@@ -1,4 +1,4 @@
-# Markdown Editor — A full-featured WYSIWYG editor for markdown
+# Better Markdown Editor - A full-featured WYSIWYG editor for markdown
 
 [![badge_title](https://vsmarketplacebadges.dev/version-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor) [![](https://vsmarketplacebadges.dev/installs-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor) [![](https://vsmarketplacebadges.dev/rating-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor)
 
@@ -33,7 +33,7 @@
 
 - open a markdown file
 - type `cmd-shift-p` to enter command mode
-- type `markdown-editor: Open with markdown editor`
+- type `Better Markdown Editor: Open with Better Markdown Editor`
 
 ### 2. Key bindings
 
@@ -43,19 +43,19 @@
 ### 3. Explorer Context menu
 
 - right click on markdown file
-- then click `Open with markdown editor`
+- then click `Open with Better Markdown Editor`
 
 ### 4. Editor title context menu
 
 - right click on a opened markdown file's tab title
-- then click `Open with markdown editor`
+- then click `Open with Better Markdown Editor`
 
 ### 5. Open With... and Set Default Editor
 
 - right click on a markdown file in Explorer
 - click `Open With...`
-- select `Markdown Editor` to open temporary
-- or click `Configure default editor...` and select `Markdown Editor` to set it as default
+- select `Better Markdown Editor` to open temporary
+- or click `Configure default editor...` and select `Better Markdown Editor` to set it as default
 
 ### Custom CSS (custom layout and vditor personalization)
 

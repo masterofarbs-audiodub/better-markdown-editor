@@ -1,8 +1,8 @@
 {
   "name": "better-markdown-editor",
-  "displayName": "Markdown Editor",
+  "displayName": "Better Markdown Editor",
   "icon": "media/logo.png",
-  "description": "A full-featured WYSIWYG editor for markdown.",
+  "description": "A full-featured WYSIWYG markdown editor for VS Code.",
   "version": "0.1.14",
   "publisher": "masterofarbs-audiodub",
   "private": true,
@@ -36,8 +36,8 @@
     "commands": [
       {
         "command": "markdown-editor.openEditor",
-        "title": "Open with markdown editor",
-        "category": "markdown-editor"
+        "title": "Open with Better Markdown Editor",
+        "category": "Better Markdown Editor"
       }
     ],
     "menus": {
@@ -59,7 +59,7 @@
     "customEditors": [
       {
         "viewType": "markdown-editor.customEditor",
-        "displayName": "Markdown Editor",
+        "displayName": "Better Markdown Editor",
         "selector": [
           {
             "filenamePattern": "*.md"
@@ -72,7 +72,7 @@
       }
     ],
     "configuration": {
-      "title": "markdown-editor",
+      "title": "Better Markdown Editor",
       "properties": {
         "markdown-editor.imageSaveFolder": {
           "type": "string",
