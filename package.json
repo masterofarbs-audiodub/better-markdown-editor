@@ -96,6 +96,12 @@
         "command": "markdown-editor.openEditor",
         "mac": "cmd+shift+alt+m",
         "when": "editorTextFocus && editorLangId == markdown"
+      },
+      {
+        "key": "ctrl+f",
+        "command": "editor.action.webvieweditor.showFind",
+        "mac": "cmd+f",
+        "when": "activeCustomEditorId == 'markdown-editor.customEditor'"
       }
     ]
   },
