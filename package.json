@@ -102,14 +102,19 @@
   "scripts": {
     "watch": "foy watch",
     "start": "foy watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:bench": "vitest bench",
     "pub": "foy build && npm version patch && git push origin master --tags && vsce package && vsce publish"
   },
   "devDependencies": {
     "@types/node": "^12.12.0",
     "@types/vscode": "^1.47.0",
     "foy": "^0.2.5",
+    "jsdom": "24.1.0",
     "ts-node": "9.1.1",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.2",
+    "vitest": "1.6.1"
   },
   "packageManager": "pnpm@9.7.1"
 }

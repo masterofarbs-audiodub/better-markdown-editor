@@ -11,8 +11,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
       - name: Install
-        run: yarn; cd ./media-src; yarn
+        run: pnpm install && cd ./media-src && pnpm install
       - name: Test
         run: npm test
       - name: Publish to Visual Studio Marketplace
