@@ -10,3 +10,6 @@ esbuild.js
 Foyfile.ts
 yarn.lock
 yarn-error.log
+test
+**/*.js.map
+CLAUDE.md
