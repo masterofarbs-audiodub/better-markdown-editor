@@ -206,3 +206,27 @@ describe('handleMap deleteColumn mapping', () => {
     expect(events[0].shiftKey).toBe(false)
   })
 })
+
+describe('package.json keybindings', () => {
+  let pkg: any
+
+  beforeEach(async () => {
+    const fs = await import('fs')
+    const path = await import('path')
+    pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf8'))
+  })
+
+  it('has Cmd+F keybinding for custom editor find', () => {
+    const keybindings = pkg.contributes.keybindings
+    const findBinding = keybindings.find((k: any) => k.command === 'editor.action.webvieweditor.showFind')
+    expect(findBinding).toBeDefined()
+    expect(findBinding.mac).toBe('cmd+f')
+    expect(findBinding.key).toBe('ctrl+f')
+    expect(findBinding.when).toContain('markdown-editor.customEditor')
+  })
+
+  it('has enableFindWidget in custom editor registration options', () => {
+    const customEditors = pkg.contributes.customEditors
+    expect(customEditors[0].viewType).toBe('markdown-editor.customEditor')
+  })
+})
