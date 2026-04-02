@@ -128,6 +128,7 @@ class EditorPanel {
       localResourceRoots: [vscode.Uri.file("/"), ...this.getFolders()],
       retainContextWhenHidden: true,
       enableCommandUris: true,
+      enableFindWidget: true,
     }
   }
   private get _fsPath() {
@@ -581,6 +582,7 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     return {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.file('/'), ...MarkdownEditorProvider.getFolders()],
+      enableFindWidget: true,
     }
   }
 
