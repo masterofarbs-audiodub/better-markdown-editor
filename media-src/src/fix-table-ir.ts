@@ -1,7 +1,6 @@
 /**
  * ir 模式下支持 table 编辑
  */
-import { keyboard } from '@testing-library/user-event/dist/keyboard'
 import $ from 'jquery'
 import { i18n } from 'vditor/src/ts/i18n/index'
 import { updateHotkeyTip } from 'vditor/src/ts/util/compatibility'
@@ -9,6 +8,45 @@ import { lang } from './lang'
 
 const tablePanelId = 'fix-table-ir-wrapper'
 let disableVscodeHotkeys = false
+
+const keyCodeMap: Record<string, [string, number]> = {
+  '-': ['Minus', 189], '=': ['Equal', 187], '+': ['Equal', 187],
+  '_': ['Minus', 189],
+  a: ['KeyA', 65], b: ['KeyB', 66], c: ['KeyC', 67], d: ['KeyD', 68],
+  e: ['KeyE', 69], f: ['KeyF', 70], g: ['KeyG', 71], h: ['KeyH', 72],
+  i: ['KeyI', 73], j: ['KeyJ', 74], k: ['KeyK', 75], l: ['KeyL', 76],
+  m: ['KeyM', 77], n: ['KeyN', 78], o: ['KeyO', 79], p: ['KeyP', 80],
+  q: ['KeyQ', 81], r: ['KeyR', 82], s: ['KeyS', 83], t: ['KeyT', 84],
+  u: ['KeyU', 85], v: ['KeyV', 86], w: ['KeyW', 87], x: ['KeyX', 88],
+  y: ['KeyY', 89], z: ['KeyZ', 90],
+}
+
+function simulateKeys(keyString: string, target: HTMLElement) {
+  let ctrlKey = false, shiftKey = false, metaKey = false
+  let i = 0
+  while (i < keyString.length) {
+    if (keyString[i] === '{') {
+      const end = keyString.indexOf('}', i)
+      const token = keyString.slice(i + 1, end)
+      if (token === 'ctrl') ctrlKey = true
+      else if (token === '/ctrl') ctrlKey = false
+      else if (token === 'shift') shiftKey = true
+      else if (token === '/shift') shiftKey = false
+      else if (token === 'meta') metaKey = true
+      else if (token === '/meta') metaKey = false
+      i = end + 1
+    } else {
+      const key = keyString[i]
+      const [code, keyCode] = keyCodeMap[key.toLowerCase()] || ['', 0]
+      const opts: KeyboardEventInit & { keyCode: number } = {
+        key, code, keyCode, ctrlKey, shiftKey, metaKey, bubbles: true, cancelable: true
+      }
+      target.dispatchEvent(new KeyboardEvent('keydown', opts))
+      target.dispatchEvent(new KeyboardEvent('keyup', opts))
+      i++
+    }
+  }
+}
 
 export function fixTableIr() {
   const eventRoot = vditor.vditor.ir.element
@@ -120,7 +158,7 @@ export function fixTableIr() {
             '{meta}{shift}={/shift}{/meta}',
           ],
           deleteColumn: [
-            '{ctrl}{shift}_{/shift}{/ctrl}',
+            '{ctrl}{shift}-{/shift}{/ctrl}',
             '{meta}{shift}-{/shift}{/meta}',
           ], // 有的是+ 有的是=; -/_ 都是为了fix不同平 bug
         }
@@ -129,15 +167,8 @@ export function fixTableIr() {
             navigator.platform.toLowerCase().includes('mac') ? 1 : 0
           ]
         disableVscodeHotkeys = true
-        Promise.resolve(
-          keyboard(k, {
-            document: {
-              body: eventRoot,
-            } as any,
-          })
-        ).finally(() => {
-          disableVscodeHotkeys = false
-        })
+        simulateKeys(k, eventRoot)
+        disableVscodeHotkeys = false
         e.stopPropagation()
       })
     }
