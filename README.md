@@ -14,14 +14,10 @@
 4. Uploaded/pasted/drag-dropped images will be auto-saved to the `assets` folder
 5. Multi-theme support
 6. Shortcut keys
-7. Multiple editti[](https://)ng modes: instant Rendering mode (**Recommand!**) / WYSIWYG mode / split screen mode
+7. Multiple editing modes: instant Rendering mode (**Recommend!**) / WYSIWYG mode / split screen mode
 8. Markdown extensions
-9. Multiple graph support including KaTeX / Mermaid / Graphviz / ECharts / abc.js(notatioan) / ...
+9. Multiple graph support including KaTeX / Mermaid / Graphviz / ECharts / abc.js (notation) / ...
 10. For more usage please see [vditor](https://github.com/Vanessa219/vditor)
-
-## Install
-
-[https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor)
 
 ## Local Development / Installation
 
