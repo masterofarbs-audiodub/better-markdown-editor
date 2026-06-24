@@ -36,12 +36,18 @@ describe('package.json: activationEvents', () => {
 describe('package.json: contributed settings', () => {
   const props = manifest.contributes.configuration.properties
 
-  it('declares all five user-facing settings', () => {
+  it('declares all eleven user-facing settings', () => {
     expect(Object.keys(props).sort()).toEqual([
       'markdown-editor.customCss',
+      'markdown-editor.headingHighlightBackground',
+      'markdown-editor.headingHighlightForeground',
+      'markdown-editor.headingHighlightPerLevel',
       'markdown-editor.highlightHeadings',
+      'markdown-editor.highlightTableHeaders',
       'markdown-editor.imageSaveFolder',
+      'markdown-editor.outlineMaxDepth',
       'markdown-editor.outlinePosition',
+      'markdown-editor.spellcheck',
       'markdown-editor.useVscodeThemeColor',
     ])
   })
@@ -55,6 +61,38 @@ describe('package.json: contributed settings', () => {
 
   it('highlightHeadings defaults to false', () => {
     expect(props['markdown-editor.highlightHeadings'].default).toBe(false)
+  })
+
+  it('heading highlight color overrides default to empty string', () => {
+    // Empty string is the sentinel for "use the VS Code theme variable
+    // fallback" — the CSS rule is `var(--bme-heading-bg, var(--vscode-…))`.
+    expect(props['markdown-editor.headingHighlightBackground'].default).toBe('')
+    expect(props['markdown-editor.headingHighlightForeground'].default).toBe('')
+    expect(props['markdown-editor.headingHighlightBackground'].type).toBe('string')
+    expect(props['markdown-editor.headingHighlightForeground'].type).toBe('string')
+  })
+
+  it('headingHighlightPerLevel defaults to false', () => {
+    expect(props['markdown-editor.headingHighlightPerLevel'].default).toBe(false)
+    expect(props['markdown-editor.headingHighlightPerLevel'].type).toBe('boolean')
+  })
+
+  it('highlightTableHeaders defaults to false', () => {
+    expect(props['markdown-editor.highlightTableHeaders'].default).toBe(false)
+    expect(props['markdown-editor.highlightTableHeaders'].type).toBe('boolean')
+  })
+
+  it('spellcheck defaults to false', () => {
+    expect(props['markdown-editor.spellcheck'].default).toBe(false)
+    expect(props['markdown-editor.spellcheck'].type).toBe('boolean')
+  })
+
+  it('outlineMaxDepth is a 1..6 integer with default 6', () => {
+    const o = props['markdown-editor.outlineMaxDepth']
+    expect(o.type).toBe('integer')
+    expect(o.minimum).toBe(1)
+    expect(o.maximum).toBe(6)
+    expect(o.default).toBe(6)
   })
 
   it('every setting has a description', () => {

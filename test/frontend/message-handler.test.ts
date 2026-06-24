@@ -205,6 +205,163 @@ describe('highlightHeadings handling', () => {
   })
 })
 
+describe('heading highlight color & per-level customization', () => {
+  // Replicate the customization branch of the init handler.
+  function applyHeadingColors(msg: any) {
+    document.body.setAttribute(
+      'data-highlight-headings-per-level',
+      msg.options && msg.options.headingHighlightPerLevel ? '1' : '0'
+    )
+    const bg = msg.options && msg.options.headingHighlightBackground
+    const fg = msg.options && msg.options.headingHighlightForeground
+    if (bg) {
+      document.body.style.setProperty('--bme-heading-bg', bg)
+    } else {
+      document.body.style.removeProperty('--bme-heading-bg')
+    }
+    if (fg) {
+      document.body.style.setProperty('--bme-heading-fg', fg)
+    } else {
+      document.body.style.removeProperty('--bme-heading-fg')
+    }
+  }
+
+  beforeEach(() => {
+    document.body.removeAttribute('data-highlight-headings-per-level')
+    document.body.style.removeProperty('--bme-heading-bg')
+    document.body.style.removeProperty('--bme-heading-fg')
+  })
+
+  it("sets --bme-heading-bg when headingHighlightBackground is a color", () => {
+    applyHeadingColors({
+      options: { headingHighlightBackground: 'rgba(255, 200, 0, 0.15)' },
+    })
+    expect(document.body.style.getPropertyValue('--bme-heading-bg')).toBe(
+      'rgba(255, 200, 0, 0.15)'
+    )
+  })
+
+  it("sets --bme-heading-fg when headingHighlightForeground is a color", () => {
+    applyHeadingColors({
+      options: { headingHighlightForeground: '#222' },
+    })
+    expect(document.body.style.getPropertyValue('--bme-heading-fg')).toBe('#222')
+  })
+
+  it('clears the custom property when the setting is an empty string', () => {
+    // Pre-seed the property as if from a previous init.
+    document.body.style.setProperty('--bme-heading-bg', 'red')
+    applyHeadingColors({ options: { headingHighlightBackground: '' } })
+    expect(document.body.style.getPropertyValue('--bme-heading-bg')).toBe('')
+  })
+
+  it("sets data-highlight-headings-per-level to '1' when option is true", () => {
+    applyHeadingColors({ options: { headingHighlightPerLevel: true } })
+    expect(
+      document.body.getAttribute('data-highlight-headings-per-level')
+    ).toBe('1')
+  })
+
+  it("sets data-highlight-headings-per-level to '0' when option is missing", () => {
+    applyHeadingColors({ options: {} })
+    expect(
+      document.body.getAttribute('data-highlight-headings-per-level')
+    ).toBe('0')
+  })
+
+  it('does not throw when msg.options is undefined', () => {
+    expect(() => applyHeadingColors({})).not.toThrow()
+    expect(
+      document.body.getAttribute('data-highlight-headings-per-level')
+    ).toBe('0')
+    expect(document.body.style.getPropertyValue('--bme-heading-bg')).toBe('')
+    expect(document.body.style.getPropertyValue('--bme-heading-fg')).toBe('')
+  })
+})
+
+describe('highlightTableHeaders handling', () => {
+  function applyTableHeaders(msg: any) {
+    document.body.setAttribute(
+      'data-highlight-table-headers',
+      msg.options && msg.options.highlightTableHeaders ? '1' : '0'
+    )
+  }
+
+  beforeEach(() => {
+    document.body.removeAttribute('data-highlight-table-headers')
+  })
+
+  it("sets data-highlight-table-headers to '1' when option is true", () => {
+    applyTableHeaders({ options: { highlightTableHeaders: true } })
+    expect(document.body.getAttribute('data-highlight-table-headers')).toBe('1')
+  })
+
+  it("sets data-highlight-table-headers to '0' when option is missing", () => {
+    applyTableHeaders({ options: {} })
+    expect(document.body.getAttribute('data-highlight-table-headers')).toBe('0')
+  })
+
+  it("sets data-highlight-table-headers to '0' when msg.options is undefined", () => {
+    expect(() => applyTableHeaders({})).not.toThrow()
+    expect(document.body.getAttribute('data-highlight-table-headers')).toBe('0')
+  })
+})
+
+describe('outlineMaxDepth handling', () => {
+  // Replicate the clamp + body-attribute logic from main.ts.
+  function applyOutlineMaxDepth(msg: any) {
+    const rawDepth =
+      msg.options && typeof msg.options.outlineMaxDepth === 'number'
+        ? msg.options.outlineMaxDepth
+        : 6
+    const depth = Math.min(6, Math.max(1, Math.floor(rawDepth)))
+    document.body.setAttribute('data-outline-max-depth', String(depth))
+  }
+
+  beforeEach(() => {
+    document.body.removeAttribute('data-outline-max-depth')
+  })
+
+  it('writes the literal value for in-range integers', () => {
+    for (const depth of [1, 2, 3, 4, 5, 6]) {
+      applyOutlineMaxDepth({ options: { outlineMaxDepth: depth } })
+      expect(document.body.getAttribute('data-outline-max-depth')).toBe(
+        String(depth)
+      )
+    }
+  })
+
+  it('clamps below-range values up to 1', () => {
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: 0 } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('1')
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: -3 } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('1')
+  })
+
+  it('clamps above-range values down to 6', () => {
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: 7 } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: 999 } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+  })
+
+  it('floors non-integer numeric values', () => {
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: 2.9 } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('2')
+  })
+
+  it('defaults to 6 when option is missing or wrong type', () => {
+    applyOutlineMaxDepth({ options: {} })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: 'three' } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+    applyOutlineMaxDepth({ options: { outlineMaxDepth: null } })
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+    applyOutlineMaxDepth({})
+    expect(document.body.getAttribute('data-outline-max-depth')).toBe('6')
+  })
+})
+
 describe('initVditor option merging', () => {
   it('dark theme overrides stored options', () => {
     // Simple deep merge matching lodash.merge behavior

@@ -8,6 +8,7 @@ import {
   fixPanelHover,
   handleToolbarClick,
   saveVditorOptions,
+  applySpellcheck,
 } from './utils'
 
 // Import Vditor from its TS source rather than the pre-bundled UMD
@@ -27,7 +28,11 @@ function deepMerge(target: any, ...sources: any[]): any {
   for (const source of sources) {
     if (!source) continue
     for (const key of Object.keys(source)) {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (
+        source[key] &&
+        typeof source[key] === 'object' &&
+        !Array.isArray(source[key])
+      ) {
         target[key] = deepMerge(target[key] || {}, source[key])
       } else {
         target[key] = source[key]
@@ -50,8 +55,8 @@ function initVditor(msg) {
     preview: {
       math: {
         inlineDigit: true,
-      }
-    }
+      },
+    },
   })
   if (msg.options?.outlinePosition) {
     defaultOptions.outline = {
@@ -89,6 +94,7 @@ function initVditor(msg) {
       handleToolbarClick()
       fixTableIr()
       fixPanelHover()
+      applySpellcheck(!!msg.options?.spellcheck)
     },
     input() {
       inputTimer && clearTimeout(inputTimer)
@@ -136,6 +142,38 @@ window.addEventListener('message', (e) => {
           'data-highlight-headings',
           msg.options && msg.options.highlightHeadings ? '1' : '0'
         )
+        document.body.setAttribute(
+          'data-highlight-headings-per-level',
+          msg.options && msg.options.headingHighlightPerLevel ? '1' : '0'
+        )
+        // Custom heading colors override the default --vscode-* fallbacks.
+        // We set them as CSS custom properties on the body so the rules in
+        // main.css can fall back via `var(--bme-heading-bg, var(--vscode-…))`.
+        // Empty-string settings clear the property so the fallback wins.
+        const bg = msg.options && msg.options.headingHighlightBackground
+        const fg = msg.options && msg.options.headingHighlightForeground
+        if (bg) {
+          document.body.style.setProperty('--bme-heading-bg', bg)
+        } else {
+          document.body.style.removeProperty('--bme-heading-bg')
+        }
+        if (fg) {
+          document.body.style.setProperty('--bme-heading-fg', fg)
+        } else {
+          document.body.style.removeProperty('--bme-heading-fg')
+        }
+        document.body.setAttribute(
+          'data-highlight-table-headers',
+          msg.options && msg.options.highlightTableHeaders ? '1' : '0'
+        )
+        // Clamp to 1-6 so a stray config value can't generate invalid CSS
+        // selectors. Fall back to 6 (show everything) for missing values.
+        const rawDepth =
+          msg.options && typeof msg.options.outlineMaxDepth === 'number'
+            ? msg.options.outlineMaxDepth
+            : 6
+        const depth = Math.min(6, Math.max(1, Math.floor(rawDepth)))
+        document.body.setAttribute('data-outline-max-depth', String(depth))
         try {
           initVditor(msg)
         } catch (error) {

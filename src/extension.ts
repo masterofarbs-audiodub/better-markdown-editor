@@ -127,7 +127,7 @@ export class EditorPanel {
       // Enable javascript in the webview
       enableScripts: true,
 
-      localResourceRoots: [vscode.Uri.file("/"), ...this.getFolders()],
+      localResourceRoots: [vscode.Uri.file('/'), ...this.getFolders()],
       retainContextWhenHidden: true,
       enableCommandUris: true,
       enableFindWidget: true,
@@ -156,47 +156,72 @@ export class EditorPanel {
     // This happens when the user closes the panel or when the panel is closed programmatically
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
     // close EditorPanel when vsc editor is close
-    vscode.workspace.onDidCloseTextDocument((e) => {
-      if (e.fileName === this._fsPath) {
-        this.dispose()
-      }
-    }, null, this._disposables)
+    vscode.workspace.onDidCloseTextDocument(
+      (e) => {
+        if (e.fileName === this._fsPath) {
+          this.dispose()
+        }
+      },
+      null,
+      this._disposables
+    )
     // re-init webview when VS Code theme changes
-    vscode.window.onDidChangeActiveColorTheme((theme) => {
-      this._update({
-        type: 'init',
-        options: {
-          useVscodeThemeColor: EditorPanel.config.get<boolean>(
-            'useVscodeThemeColor'
-          ),
-          highlightHeadings: EditorPanel.config.get<boolean>(
-            'highlightHeadings'
-          ),
-          outlinePosition: EditorPanel.config.get<'left' | 'right'>(
-            'outlinePosition'
-          ),
-          ...this._context.globalState.get(KeyVditorOptions),
-        },
-        theme: theme.kind === vscode.ColorThemeKind.Dark ? 'dark' : 'light',
-      })
-    }, null, this._disposables)
+    vscode.window.onDidChangeActiveColorTheme(
+      (theme) => {
+        this._update({
+          type: 'init',
+          options: {
+            useVscodeThemeColor: EditorPanel.config.get<boolean>(
+              'useVscodeThemeColor'
+            ),
+            highlightHeadings:
+              EditorPanel.config.get<boolean>('highlightHeadings'),
+            headingHighlightBackground: EditorPanel.config.get<string>(
+              'headingHighlightBackground'
+            ),
+            headingHighlightForeground: EditorPanel.config.get<string>(
+              'headingHighlightForeground'
+            ),
+            headingHighlightPerLevel: EditorPanel.config.get<boolean>(
+              'headingHighlightPerLevel'
+            ),
+            highlightTableHeaders: EditorPanel.config.get<boolean>(
+              'highlightTableHeaders'
+            ),
+            outlineMaxDepth: EditorPanel.config.get<number>('outlineMaxDepth'),
+            outlinePosition: EditorPanel.config.get<'left' | 'right'>(
+              'outlinePosition'
+            ),
+            spellcheck: EditorPanel.config.get<boolean>('spellcheck'),
+            ...this._context.globalState.get(KeyVditorOptions),
+          },
+          theme: theme.kind === vscode.ColorThemeKind.Dark ? 'dark' : 'light',
+        })
+      },
+      null,
+      this._disposables
+    )
     // update EditorPanel when vsc editor changes
-    vscode.workspace.onDidChangeTextDocument((e) => {
-      if (e.document.fileName !== this._document.fileName) {
-        return
-      }
-      // When webview panel is active, do not sync updates from VS Code editor caused by webview edits back to webview
-      // don't change webview panel when webview panel is focus
-      if (this._panel.active) {
-        return
-      }
-      if (this._textEditTimer) clearTimeout(this._textEditTimer)
-      this._textEditTimer = setTimeout(() => {
-        this._textEditTimer = undefined
-        this._update()
-        this._updateEditTitle()
-      }, 300)
-    }, null, this._disposables)
+    vscode.workspace.onDidChangeTextDocument(
+      (e) => {
+        if (e.document.fileName !== this._document.fileName) {
+          return
+        }
+        // When webview panel is active, do not sync updates from VS Code editor caused by webview edits back to webview
+        // don't change webview panel when webview panel is focus
+        if (this._panel.active) {
+          return
+        }
+        if (this._textEditTimer) clearTimeout(this._textEditTimer)
+        this._textEditTimer = setTimeout(() => {
+          this._textEditTimer = undefined
+          this._update()
+          this._updateEditTitle()
+        }, 300)
+      },
+      null,
+      this._disposables
+    )
     // Handle messages from the webview
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
@@ -226,17 +251,31 @@ export class EditorPanel {
                 useVscodeThemeColor: EditorPanel.config.get<boolean>(
                   'useVscodeThemeColor'
                 ),
-                highlightHeadings: EditorPanel.config.get<boolean>(
-                  'highlightHeadings'
+                highlightHeadings:
+                  EditorPanel.config.get<boolean>('highlightHeadings'),
+                headingHighlightBackground: EditorPanel.config.get<string>(
+                  'headingHighlightBackground'
                 ),
+                headingHighlightForeground: EditorPanel.config.get<string>(
+                  'headingHighlightForeground'
+                ),
+                headingHighlightPerLevel: EditorPanel.config.get<boolean>(
+                  'headingHighlightPerLevel'
+                ),
+                highlightTableHeaders: EditorPanel.config.get<boolean>(
+                  'highlightTableHeaders'
+                ),
+                outlineMaxDepth:
+                  EditorPanel.config.get<number>('outlineMaxDepth'),
                 outlinePosition: EditorPanel.config.get<'left' | 'right'>(
                   'outlinePosition'
                 ),
+                spellcheck: EditorPanel.config.get<boolean>('spellcheck'),
                 ...this._context.globalState.get(KeyVditorOptions),
               },
               theme:
                 vscode.window.activeColorTheme.kind ===
-                  vscode.ColorThemeKind.Dark
+                vscode.ColorThemeKind.Dark
                   ? 'dark'
                   : 'light',
             })
@@ -308,7 +347,9 @@ export class EditorPanel {
             break
           }
           case 'find': {
-            vscode.commands.executeCommand('editor.action.webvieweditor.showFind')
+            vscode.commands.executeCommand(
+              'editor.action.webvieweditor.showFind'
+            )
             break
           }
         }
@@ -446,7 +487,7 @@ export class EditorPanel {
 class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'markdown-editor.customEditor'
 
-  constructor(private readonly context: vscode.ExtensionContext) { }
+  constructor(private readonly context: vscode.ExtensionContext) {}
 
   /**
    * Called when user selects Better Markdown Editor via "Open With"
@@ -461,7 +502,10 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
     // Init webview content
     const uri = document.uri
-    webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, uri)
+    webviewPanel.webview.html = this.getHtmlForWebview(
+      webviewPanel.webview,
+      uri
+    )
     webviewPanel.title = NodePath.basename(uri.fsPath)
 
     const disposables: vscode.Disposable[] = []
@@ -477,7 +521,13 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     // Send update to webview
-    const updateWebview = (props: { type?: 'init' | 'update'; options?: any; theme?: 'dark' | 'light' } = {}) => {
+    const updateWebview = (
+      props: {
+        type?: 'init' | 'update'
+        options?: any
+        theme?: 'dark' | 'light'
+      } = {}
+    ) => {
       webviewPanel.webview.postMessage({
         command: 'update',
         content: document.getText(),
@@ -486,115 +536,158 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     // Listen for document close
-    vscode.workspace.onDidCloseTextDocument((e) => {
-      if (e.fileName === uri.fsPath) {
-        webviewPanel.dispose()
-      }
-    }, null, disposables)
+    vscode.workspace.onDidCloseTextDocument(
+      (e) => {
+        if (e.fileName === uri.fsPath) {
+          webviewPanel.dispose()
+        }
+      },
+      null,
+      disposables
+    )
 
     // Listen for document changes (sync from external editor to webview)
-    vscode.workspace.onDidChangeTextDocument((e) => {
-      if (e.document.fileName !== document.fileName) {
-        return
-      }
-      // Do not sync when webview panel is active (avoid circular updates)
-      if (webviewPanel.active) {
-        return
-      }
-      updateWebview()
-      updateEditTitle()
-    }, null, disposables)
+    vscode.workspace.onDidChangeTextDocument(
+      (e) => {
+        if (e.document.fileName !== document.fileName) {
+          return
+        }
+        // Do not sync when webview panel is active (avoid circular updates)
+        if (webviewPanel.active) {
+          return
+        }
+        updateWebview()
+        updateEditTitle()
+      },
+      null,
+      disposables
+    )
 
     // Handle messages from webview
-    webviewPanel.webview.onDidReceiveMessage(async (message) => {
-      debug('msg from webview', message, webviewPanel.active)
+    webviewPanel.webview.onDidReceiveMessage(
+      async (message) => {
+        debug('msg from webview', message, webviewPanel.active)
 
-      const syncToEditor = async () => {
-        const edit = new vscode.WorkspaceEdit()
-        edit.replace(
-          document.uri,
-          new vscode.Range(0, 0, document.lineCount, 0),
-          message.content
-        )
-        await vscode.workspace.applyEdit(edit)
-      }
+        const syncToEditor = async () => {
+          const edit = new vscode.WorkspaceEdit()
+          edit.replace(
+            document.uri,
+            new vscode.Range(0, 0, document.lineCount, 0),
+            message.content
+          )
+          await vscode.workspace.applyEdit(edit)
+        }
 
-      switch (message.command) {
-        case 'ready':
-          updateWebview({
-            type: 'init',
-            options: {
-              useVscodeThemeColor: EditorPanel.config.get<boolean>('useVscodeThemeColor'),
-              highlightHeadings: EditorPanel.config.get<boolean>('highlightHeadings'),
-              outlinePosition: EditorPanel.config.get<'left' | 'right'>('outlinePosition'),
-              ...this.context.globalState.get(KeyVditorOptions),
-            },
-            theme: vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark ? 'dark' : 'light',
-          })
-          break
-        case 'save-options':
-          this.context.globalState.update(KeyVditorOptions, message.options)
-          break
-        case 'info':
-          vscode.window.showInformationMessage(message.content)
-          break
-        case 'error':
-          showError(message.content)
-          break
-        case 'edit':
-          if (webviewPanel.active) {
-            await syncToEditor()
-            updateEditTitle()
-          }
-          break
-        case 'reset-config':
-          await this.context.globalState.update(KeyVditorOptions, {})
-          break
-        case 'save':
-          await syncToEditor()
-          await document.save()
-          updateEditTitle()
-          break
-        case 'upload': {
-          const assetsFolder = EditorPanel.getAssetsFolder(uri)
-          try {
-            await vscode.workspace.fs.createDirectory(vscode.Uri.file(assetsFolder))
-          } catch (error) {
-            console.error(error)
-            showError(`Invalid image folder: ${assetsFolder}`)
-          }
-          await Promise.all(
-            message.files.map(async (f: any) => {
-              const content = Buffer.from(f.base64, 'base64')
-              return vscode.workspace.fs.writeFile(
-                vscode.Uri.file(NodePath.join(assetsFolder, f.name)),
-                content
-              )
+        switch (message.command) {
+          case 'ready':
+            updateWebview({
+              type: 'init',
+              options: {
+                useVscodeThemeColor: EditorPanel.config.get<boolean>(
+                  'useVscodeThemeColor'
+                ),
+                highlightHeadings:
+                  EditorPanel.config.get<boolean>('highlightHeadings'),
+                headingHighlightBackground: EditorPanel.config.get<string>(
+                  'headingHighlightBackground'
+                ),
+                headingHighlightForeground: EditorPanel.config.get<string>(
+                  'headingHighlightForeground'
+                ),
+                headingHighlightPerLevel: EditorPanel.config.get<boolean>(
+                  'headingHighlightPerLevel'
+                ),
+                highlightTableHeaders: EditorPanel.config.get<boolean>(
+                  'highlightTableHeaders'
+                ),
+                outlineMaxDepth:
+                  EditorPanel.config.get<number>('outlineMaxDepth'),
+                outlinePosition: EditorPanel.config.get<'left' | 'right'>(
+                  'outlinePosition'
+                ),
+                spellcheck: EditorPanel.config.get<boolean>('spellcheck'),
+                ...this.context.globalState.get(KeyVditorOptions),
+              },
+              theme:
+                vscode.window.activeColorTheme.kind ===
+                vscode.ColorThemeKind.Dark
+                  ? 'dark'
+                  : 'light',
             })
-          )
-          const files = message.files.map((f: any) =>
-            NodePath.relative(NodePath.dirname(uri.fsPath), NodePath.join(assetsFolder, f.name)).replace(/\\/g, '/')
-          )
-          webviewPanel.webview.postMessage({
-            command: 'uploaded',
-            files,
-          })
-          break
-        }
-        case 'open-link': {
-          let url = message.href
-          if (!/^http/.test(url)) {
-            url = NodePath.resolve(uri.fsPath, '..', url)
+            break
+          case 'save-options':
+            this.context.globalState.update(KeyVditorOptions, message.options)
+            break
+          case 'info':
+            vscode.window.showInformationMessage(message.content)
+            break
+          case 'error':
+            showError(message.content)
+            break
+          case 'edit':
+            if (webviewPanel.active) {
+              await syncToEditor()
+              updateEditTitle()
+            }
+            break
+          case 'reset-config':
+            await this.context.globalState.update(KeyVditorOptions, {})
+            break
+          case 'save':
+            await syncToEditor()
+            await document.save()
+            updateEditTitle()
+            break
+          case 'upload': {
+            const assetsFolder = EditorPanel.getAssetsFolder(uri)
+            try {
+              await vscode.workspace.fs.createDirectory(
+                vscode.Uri.file(assetsFolder)
+              )
+            } catch (error) {
+              console.error(error)
+              showError(`Invalid image folder: ${assetsFolder}`)
+            }
+            await Promise.all(
+              message.files.map(async (f: any) => {
+                const content = Buffer.from(f.base64, 'base64')
+                return vscode.workspace.fs.writeFile(
+                  vscode.Uri.file(NodePath.join(assetsFolder, f.name)),
+                  content
+                )
+              })
+            )
+            const files = message.files.map((f: any) =>
+              NodePath.relative(
+                NodePath.dirname(uri.fsPath),
+                NodePath.join(assetsFolder, f.name)
+              ).replace(/\\/g, '/')
+            )
+            webviewPanel.webview.postMessage({
+              command: 'uploaded',
+              files,
+            })
+            break
           }
-          vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(url))
-          break
+          case 'open-link': {
+            let url = message.href
+            if (!/^http/.test(url)) {
+              url = NodePath.resolve(uri.fsPath, '..', url)
+            }
+            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(url))
+            break
+          }
+          case 'find': {
+            vscode.commands.executeCommand(
+              'editor.action.webvieweditor.showFind'
+            )
+            break
+          }
         }
-        case 'find': {
-          vscode.commands.executeCommand('editor.action.webvieweditor.showFind')
-          break
-        }
-      }
-    }, null, disposables)
+      },
+      null,
+      disposables
+    )
 
     // Clean up resources
     webviewPanel.onDidDispose(() => {
@@ -613,13 +706,20 @@ class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   private getWebviewOptions(): vscode.WebviewOptions {
     return {
       enableScripts: true,
-      localResourceRoots: [vscode.Uri.file('/'), ...MarkdownEditorProvider.getFolders()],
+      localResourceRoots: [
+        vscode.Uri.file('/'),
+        ...MarkdownEditorProvider.getFolders(),
+      ],
     }
   }
 
   private getHtmlForWebview(webview: vscode.Webview, uri: vscode.Uri): string {
-    const toUri = (f: string) => webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, f))
-    const baseHref = NodePath.dirname(webview.asWebviewUri(vscode.Uri.file(uri.fsPath)).toString()) + '/'
+    const toUri = (f: string) =>
+      webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, f))
+    const baseHref =
+      NodePath.dirname(
+        webview.asWebviewUri(vscode.Uri.file(uri.fsPath)).toString()
+      ) + '/'
     const toMediaPath = (f: string) => `media/dist/${f}`
     const JsFiles = ['main.js'].map(toMediaPath).map(toUri)
     const CssFiles = ['main.css'].map(toMediaPath).map(toUri)

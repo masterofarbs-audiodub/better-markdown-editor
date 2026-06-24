@@ -3,7 +3,7 @@
   "displayName": "Better Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG markdown editor for VS Code.",
-  "version": "0.1.14",
+  "version": "0.2.0",
   "publisher": "masterofarbs-audiodub",
   "private": true,
   "engines": {
@@ -28,7 +28,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/zaaack/vscode-markdown-editor.git"
+    "url": "https://github.com/masterofarbs-audiodub/better-markdown-editor.git"
   },
   "main": "out/extension.js",
   "contributes": {
@@ -88,11 +88,46 @@
           "default": false,
           "description": "Apply a themed background and foreground color to headings (h1–h6) for easier scanning of long documents."
         },
+        "markdown-editor.headingHighlightBackground": {
+          "type": "string",
+          "default": "",
+          "description": "Override the background color used by `highlightHeadings`. Accepts any CSS color value (e.g. `#ffe0b2`, `rgba(255, 200, 0, 0.15)`). Leave empty to use VS Code's `--vscode-editor-selectionHighlightBackground` theme variable."
+        },
+        "markdown-editor.headingHighlightForeground": {
+          "type": "string",
+          "default": "",
+          "description": "Override the foreground (text) color used by `highlightHeadings`. Accepts any CSS color value. Leave empty to use VS Code's `--vscode-editor-foreground` theme variable."
+        },
+        "markdown-editor.headingHighlightPerLevel": {
+          "type": "boolean",
+          "default": false,
+          "description": "When `highlightHeadings` is on, also apply progressively lighter tints to deeper heading levels (H1 strongest, H6 lightest). Helps the document hierarchy stand out at a glance."
+        },
+        "markdown-editor.highlightTableHeaders": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply the same themed background and foreground color used by `highlightHeadings` to `<th>` cells in tables, so table headers visually align with the document headings."
+        },
+        "markdown-editor.outlineMaxDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 6,
+          "description": "Maximum heading level shown in the outline panel. `1` shows H1 only, `2` shows H1–H2, …, `6` shows everything (default). Useful for huge documents with deep nesting."
+        },
         "markdown-editor.outlinePosition": {
           "type": "string",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "right",
           "description": "Which side of the editor the outline panel opens on when toggled from the toolbar."
+        },
+        "markdown-editor.spellcheck": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the browser-native spell checker inside the editor, surfacing red squiggles under misspelled words (uses VS Code / the OS dictionary). Off by default since markdown often contains code, identifiers, and prose mixed together."
         },
         "markdown-editor.customCss": {
           "type": "string",
@@ -119,9 +154,13 @@
   "scripts": {
     "watch": "foy watch",
     "start": "foy watch",
+    "build": "foy build",
+    "vscode:prepublish": "tsc -p ./ && cd media-src && pnpm build",
     "test": "vitest run --config test/vitest.config.ts",
     "test:watch": "vitest --config test/vitest.config.ts",
     "test:bench": "vitest bench --config test/vitest.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "pub": "foy build && npm version patch && git push origin master --tags && vsce package && vsce publish"
   },
   "devDependencies": {
@@ -129,6 +168,7 @@
     "@types/vscode": "^1.47.0",
     "foy": "^0.2.5",
     "jsdom": "24.1.0",
+    "prettier": "^3.8.4",
     "ts-node": "9.1.1",
     "typescript": "^4.2.2",
     "vitest": "1.6.1"

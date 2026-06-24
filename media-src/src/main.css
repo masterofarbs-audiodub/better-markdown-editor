@@ -15,12 +15,67 @@ body[data-use-vscode-theme-color="1"] .vditor {
   --toolbar-background-color: var(--vscode-editor-background);
   --textarea-background-color: var(--vscode-editor-background);
 }
+/*
+ * Heading highlight. The colors flow through CSS custom properties so the
+ * `markdown-editor.headingHighlightBackground` / `headingHighlightForeground`
+ * settings can override them at runtime (set on document.body in main.ts).
+ * Falls back to VS Code theme variables so themes adapt automatically.
+ */
 body[data-highlight-headings="1"] .vditor-reset :is(h1, h2, h3, h4, h5, h6) {
-  background-color: var(--vscode-editor-selectionHighlightBackground);
-  color: var(--vscode-editor-foreground);
+  background-color: var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground));
+  color: var(--bme-heading-fg, var(--vscode-editor-foreground));
   padding: 4px 8px;
   border-radius: 3px;
 }
+
+/*
+ * Per-level tinting. When `headingHighlightPerLevel` is on, H1 keeps the
+ * full strength of the background color; each deeper level fades the band
+ * via `color-mix` so the document hierarchy reads at a glance.
+ * `color-mix` is widely supported in modern Chromium (VS Code's webview
+ * runs on Electron Chromium — no compatibility risk).
+ */
+body[data-highlight-headings="1"][data-highlight-headings-per-level="1"] .vditor-reset h2 {
+  background-color: color-mix(in srgb, var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground)) 80%, transparent);
+}
+body[data-highlight-headings="1"][data-highlight-headings-per-level="1"] .vditor-reset h3 {
+  background-color: color-mix(in srgb, var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground)) 60%, transparent);
+}
+body[data-highlight-headings="1"][data-highlight-headings-per-level="1"] .vditor-reset h4 {
+  background-color: color-mix(in srgb, var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground)) 45%, transparent);
+}
+body[data-highlight-headings="1"][data-highlight-headings-per-level="1"] .vditor-reset h5 {
+  background-color: color-mix(in srgb, var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground)) 30%, transparent);
+}
+body[data-highlight-headings="1"][data-highlight-headings-per-level="1"] .vditor-reset h6 {
+  background-color: color-mix(in srgb, var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground)) 20%, transparent);
+}
+
+/*
+ * Table header highlight. Reuses the same color tokens as the heading
+ * highlight so tables visually align with the document hierarchy.
+ * Scoped to thead > tr > th to avoid bleeding into body cells.
+ */
+body[data-highlight-table-headers="1"] .vditor-reset table thead tr th {
+  background-color: var(--bme-heading-bg, var(--vscode-editor-selectionHighlightBackground));
+  color: var(--bme-heading-fg, var(--vscode-editor-foreground));
+}
+
+/*
+ * Outline max-depth filter. Vditor's outline renders headings as a nested
+ * <ul> tree — H1 is the outermost <ul>, each deeper level is one more <ul>
+ * deep. To show only H1+H2, hide the third <ul> level and below.
+ *
+ * The body attribute is set to the highest visible level (1–6, default 6).
+ * Each rule below kicks in at the corresponding depth ceiling and hides
+ * the first <ul> below that ceiling.
+ */
+body[data-outline-max-depth="1"] .vditor-outline ul ul { display: none; }
+body[data-outline-max-depth="2"] .vditor-outline ul ul ul { display: none; }
+body[data-outline-max-depth="3"] .vditor-outline ul ul ul ul { display: none; }
+body[data-outline-max-depth="4"] .vditor-outline ul ul ul ul ul { display: none; }
+body[data-outline-max-depth="5"] .vditor-outline ul ul ul ul ul ul { display: none; }
+/* depth="6" intentionally has no rule — show all levels. */
 /* fix font family */
 .vditor .vditor-reset {
   font-family: var(--vscode-editor-font-family)!important;
@@ -71,6 +126,24 @@ body[data-highlight-headings="1"] .vditor-reset :is(h1, h2, h3, h4, h5, h6) {
 .vditor-reset {
   padding-left: 35px !important;
 }
+/*
+ * Aside / callout styling. <aside> tags render as visually distinct callout
+ * blocks with a left border accent and subtle background.
+ */
+.vditor-reset aside {
+  border-left: 4px solid var(--vscode-textLink-foreground, #007acc);
+  background-color: var(--vscode-textBlockQuote-background, rgba(127, 127, 127, 0.1));
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 0 4px 4px 0;
+}
+.vditor-reset aside > *:first-child {
+  margin-top: 0;
+}
+.vditor-reset aside > *:last-child {
+  margin-bottom: 0;
+}
+
 .jconfirm {
   color: black;
 }

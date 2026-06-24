@@ -122,6 +122,46 @@ describe('saveVditorOptions logic', () => {
   })
 })
 
+describe('applySpellcheck logic', () => {
+  // Replicate applySpellcheck from utils.ts (utils.ts has import side effects).
+  const applySpellcheck = (enabled: boolean) => {
+    const app = document.getElementById('app')
+    if (!app) return
+    app.querySelectorAll<HTMLElement>('[contenteditable]').forEach((el) => {
+      el.spellcheck = enabled
+      el.setAttribute('spellcheck', String(enabled))
+    })
+  }
+
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div id="app"><pre contenteditable="true">text</pre></div>'
+  })
+
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
+  it('enables spellcheck on contenteditable elements', () => {
+    applySpellcheck(true)
+    const el = document.querySelector('[contenteditable]') as HTMLElement
+    expect(el.spellcheck).toBe(true)
+    expect(el.getAttribute('spellcheck')).toBe('true')
+  })
+
+  it('disables spellcheck on contenteditable elements', () => {
+    applySpellcheck(false)
+    const el = document.querySelector('[contenteditable]') as HTMLElement
+    expect(el.spellcheck).toBe(false)
+    expect(el.getAttribute('spellcheck')).toBe('false')
+  })
+
+  it('is a no-op when #app is absent', () => {
+    document.body.innerHTML = ''
+    expect(() => applySpellcheck(true)).not.toThrow()
+  })
+})
+
 describe('fixCut logic', () => {
   it('wraps execCommand to defer delete via setTimeout', () => {
     // jsdom doesn't implement execCommand, so we provide a stub

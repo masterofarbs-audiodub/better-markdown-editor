@@ -101,11 +101,26 @@ export function handleToolbarClick() {
   })
 }
 
+// Toggle the browser-native spell checker on Vditor's editable surface.
+// Vditor's edit area is a contenteditable element (one per mode); Chromium
+// (VS Code's webview runtime) honors the `spellcheck` attribute on it and
+// renders red squiggles using the editor / OS dictionary. Applied after each
+// (re)init — Vditor mutates the element's innerHTML on keystroke rather than
+// recreating it, so a one-time set per init sticks.
+export function applySpellcheck(enabled: boolean) {
+  const app = document.getElementById('app')
+  if (!app) return
+  app.querySelectorAll<HTMLElement>('[contenteditable]').forEach((el) => {
+    el.spellcheck = enabled
+    el.setAttribute('spellcheck', String(enabled))
+  })
+}
+
 export function fixLinkClick() {
   const openLink = (url: string) => {
     vscode.postMessage({ command: 'open-link', href: url })
   }
-  document.addEventListener('click', e=> {
+  document.addEventListener('click', (e) => {
     let el = e.target as HTMLAnchorElement
     if (el.tagName === 'A') {
       openLink(el.href)
@@ -116,7 +131,6 @@ export function fixLinkClick() {
     return window
   }
 }
-
 
 /** error:
  We don't execute document.execCommand() this time, because it is called recursively.

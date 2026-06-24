@@ -10,19 +10,42 @@ const tablePanelId = 'fix-table-ir-wrapper'
 let disableVscodeHotkeys = false
 
 const keyCodeMap: Record<string, [string, number]> = {
-  '-': ['Minus', 189], '=': ['Equal', 187], '+': ['Equal', 187],
-  '_': ['Minus', 189],
-  a: ['KeyA', 65], b: ['KeyB', 66], c: ['KeyC', 67], d: ['KeyD', 68],
-  e: ['KeyE', 69], f: ['KeyF', 70], g: ['KeyG', 71], h: ['KeyH', 72],
-  i: ['KeyI', 73], j: ['KeyJ', 74], k: ['KeyK', 75], l: ['KeyL', 76],
-  m: ['KeyM', 77], n: ['KeyN', 78], o: ['KeyO', 79], p: ['KeyP', 80],
-  q: ['KeyQ', 81], r: ['KeyR', 82], s: ['KeyS', 83], t: ['KeyT', 84],
-  u: ['KeyU', 85], v: ['KeyV', 86], w: ['KeyW', 87], x: ['KeyX', 88],
-  y: ['KeyY', 89], z: ['KeyZ', 90],
+  '-': ['Minus', 189],
+  '=': ['Equal', 187],
+  '+': ['Equal', 187],
+  _: ['Minus', 189],
+  a: ['KeyA', 65],
+  b: ['KeyB', 66],
+  c: ['KeyC', 67],
+  d: ['KeyD', 68],
+  e: ['KeyE', 69],
+  f: ['KeyF', 70],
+  g: ['KeyG', 71],
+  h: ['KeyH', 72],
+  i: ['KeyI', 73],
+  j: ['KeyJ', 74],
+  k: ['KeyK', 75],
+  l: ['KeyL', 76],
+  m: ['KeyM', 77],
+  n: ['KeyN', 78],
+  o: ['KeyO', 79],
+  p: ['KeyP', 80],
+  q: ['KeyQ', 81],
+  r: ['KeyR', 82],
+  s: ['KeyS', 83],
+  t: ['KeyT', 84],
+  u: ['KeyU', 85],
+  v: ['KeyV', 86],
+  w: ['KeyW', 87],
+  x: ['KeyX', 88],
+  y: ['KeyY', 89],
+  z: ['KeyZ', 90],
 }
 
 function simulateKeys(keyString: string, target: HTMLElement) {
-  let ctrlKey = false, shiftKey = false, metaKey = false
+  let ctrlKey = false,
+    shiftKey = false,
+    metaKey = false
   let i = 0
   while (i < keyString.length) {
     if (keyString[i] === '{') {
@@ -39,7 +62,14 @@ function simulateKeys(keyString: string, target: HTMLElement) {
       const key = keyString[i]
       const [code, keyCode] = keyCodeMap[key.toLowerCase()] || ['', 0]
       const opts: KeyboardEventInit & { keyCode: number } = {
-        key, code, keyCode, ctrlKey, shiftKey, metaKey, bubbles: true, cancelable: true
+        key,
+        code,
+        keyCode,
+        ctrlKey,
+        shiftKey,
+        metaKey,
+        bubbles: true,
+        cancelable: true,
       }
       target.dispatchEvent(new KeyboardEvent('keydown', opts))
       target.dispatchEvent(new KeyboardEvent('keyup', opts))
