@@ -1,6 +1,6 @@
 # Better Markdown Editor - A full-featured WYSIWYG editor for markdown
 
-[![badge_title](https://vsmarketplacebadges.dev/version-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor) [![](https://vsmarketplacebadges.dev/installs-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor) [![](https://vsmarketplacebadges.dev/rating-short/zaaack.markdown-editor.svg)](https://marketplace.visualstudio.com/items?itemName=zaaack.markdown-editor)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/masterofarbs-audiodub.better-markdown-editor)](https://marketplace.visualstudio.com/items?itemName=masterofarbs-audiodub.better-markdown-editor) [![Installs](https://img.shields.io/visual-studio-marketplace/i/masterofarbs-audiodub.better-markdown-editor)](https://marketplace.visualstudio.com/items?itemName=masterofarbs-audiodub.better-markdown-editor) [![Rating](https://img.shields.io/visual-studio-marketplace/r/masterofarbs-audiodub.better-markdown-editor)](https://marketplace.visualstudio.com/items?itemName=masterofarbs-audiodub.better-markdown-editor)
 
 ## Demo
 
@@ -22,6 +22,7 @@
 ## Settings
 
 - `markdown-editor.highlightHeadings` (boolean, default: `false`): when enabled, all headings (h1–h6) render with a themed background and foreground color to make sections easier to scan in long documents. This uses VS Code theme variables so it adapts to light/dark/high-contrast themes.
+- `markdown-editor.spellcheck` (boolean, default: `false`): when enabled, turns on the browser-native spell checker inside the editor, underlining misspelled words with red squiggles (using VS Code's / the OS dictionary). Off by default because markdown frequently mixes prose with code and identifiers.
 
 
 ## Local Development / Installation
