@@ -1,0 +1,46 @@
+name: CI
+
+# Runs on every PR and on pushes to master. Mirrors the local release flow:
+# install (with frozen lockfiles so drift is caught) → test → build the
+# webview bundle + host → smoke-package the VSIX. The package step doubles as
+# a guard that `vsce package` stays green (e.g. no untrusted SVG badges sneak
+# back into README.md).
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.7.1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # --frozen-lockfile fails the build if either lockfile is out of sync
+      # with its package.json — this is our "lockfiles aren't drifting" guard.
+      - name: Install (root)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install (media-src)
+        run: pnpm install --frozen-lockfile
+        working-directory: media-src
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build host + webview bundle
+        run: npx foy build
+
+      - name: Package VSIX (smoke)
+        run: npx --yes @vscode/vsce package --no-dependencies

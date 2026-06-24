@@ -1,32 +1,55 @@
-name: Deploy Extension
+name: Publish Extension
+
+# Auto-publish when a version tag (vX.Y.Z) is pushed. Tags are expected to
+# land on master via `npm version` / the `pub` script. Requires two repo
+# secrets: VS_MARKETPLACE_TOKEN and OPEN_VSX_TOKEN.
 on:
   push:
     tags:
-      - "*"
+      - "v*.*.*"
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 14
-      - uses: pnpm/action-setup@v2
+          version: 9.7.1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          version: 9
-      - name: Install
-        run: pnpm install && cd ./media-src && pnpm install
+          node-version: 20
+          cache: pnpm
+
+      - name: Install (root)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install (media-src)
+        run: pnpm install --frozen-lockfile
+        working-directory: media-src
+
       - name: Test
-        run: npm test
+        run: pnpm test
+
+      - name: Build host + webview bundle
+        run: npx foy build
+
+      # Package + publish to Open VSX first; the action exposes the built
+      # vsixPath as an output, which we reuse for the Marketplace step so we
+      # publish the exact same artifact to both registries.
+      - name: Publish to Open VSX Registry
+        id: publishToOpenVSX
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+
       - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v0
+        uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
-          packagePath: ''
-      - name: Publish to Open VSX Registry
-        uses: HaaLeo/publish-vscode-extension@v0
-        id: publishToOpenVSX
-        with:
-          pat: ${{ secrets.OPEN_VSX_TOKEN }}
