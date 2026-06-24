@@ -117,9 +117,17 @@
         },
         "markdown-editor.outlinePosition": {
           "type": "string",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "right",
           "description": "Which side of the editor the outline panel opens on when toggled from the toolbar."
+        },
+        "markdown-editor.spellcheck": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the browser-native spell checker inside the editor, surfacing red squiggles under misspelled words (uses VS Code / the OS dictionary). Off by default since markdown often contains code, identifiers, and prose mixed together."
         },
         "markdown-editor.customCss": {
           "type": "string",

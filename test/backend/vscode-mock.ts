@@ -48,6 +48,7 @@ const mockConfigDefaults = {
   headingHighlightForeground: '',
   headingHighlightPerLevel: false,
   highlightTableHeaders: false,
+  spellcheck: false,
 } as const
 
 const mockConfig: Record<string, any> = { ...mockConfigDefaults }

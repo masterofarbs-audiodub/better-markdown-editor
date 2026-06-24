@@ -36,7 +36,7 @@ describe('package.json: activationEvents', () => {
 describe('package.json: contributed settings', () => {
   const props = manifest.contributes.configuration.properties
 
-  it('declares all ten user-facing settings', () => {
+  it('declares all eleven user-facing settings', () => {
     expect(Object.keys(props).sort()).toEqual([
       'markdown-editor.customCss',
       'markdown-editor.headingHighlightBackground',
@@ -47,6 +47,7 @@ describe('package.json: contributed settings', () => {
       'markdown-editor.imageSaveFolder',
       'markdown-editor.outlineMaxDepth',
       'markdown-editor.outlinePosition',
+      'markdown-editor.spellcheck',
       'markdown-editor.useVscodeThemeColor',
     ])
   })
@@ -79,6 +80,11 @@ describe('package.json: contributed settings', () => {
   it('highlightTableHeaders defaults to false', () => {
     expect(props['markdown-editor.highlightTableHeaders'].default).toBe(false)
     expect(props['markdown-editor.highlightTableHeaders'].type).toBe('boolean')
+  })
+
+  it('spellcheck defaults to false', () => {
+    expect(props['markdown-editor.spellcheck'].default).toBe(false)
+    expect(props['markdown-editor.spellcheck'].type).toBe('boolean')
   })
 
   it('outlineMaxDepth is a 1..6 integer with default 6', () => {

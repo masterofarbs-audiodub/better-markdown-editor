@@ -8,6 +8,7 @@ import {
   fixPanelHover,
   handleToolbarClick,
   saveVditorOptions,
+  applySpellcheck,
 } from './utils'
 
 // Import Vditor from its TS source rather than the pre-bundled UMD
@@ -27,7 +28,11 @@ function deepMerge(target: any, ...sources: any[]): any {
   for (const source of sources) {
     if (!source) continue
     for (const key of Object.keys(source)) {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (
+        source[key] &&
+        typeof source[key] === 'object' &&
+        !Array.isArray(source[key])
+      ) {
         target[key] = deepMerge(target[key] || {}, source[key])
       } else {
         target[key] = source[key]
@@ -50,8 +55,8 @@ function initVditor(msg) {
     preview: {
       math: {
         inlineDigit: true,
-      }
-    }
+      },
+    },
   })
   if (msg.options?.outlinePosition) {
     defaultOptions.outline = {
@@ -89,6 +94,7 @@ function initVditor(msg) {
       handleToolbarClick()
       fixTableIr()
       fixPanelHover()
+      applySpellcheck(!!msg.options?.spellcheck)
     },
     input() {
       inputTimer && clearTimeout(inputTimer)
